@@ -27,3 +27,7 @@ const startOfWeek = new Date(currentDate.setDate(firstDate));
 console.log(`The begin of this week was : ${startOfWeek.getDate()}/${startOfWeek.getMonth() + 1}/${startOfWeek.getFullYear()}`);
 const endOfWeek = new Date(currentDate.setDate(lastDate));
 console.log(`The end of this week is : ${endOfWeek.getDate()}/${endOfWeek.getMonth() + 1}/${endOfWeek.getFullYear()}`);
+
+// For view month
+// -- SQL
+// select * from examen where date_part('month', date_examen) == date_part('month', CURRENT_DATE)
