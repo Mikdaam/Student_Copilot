@@ -28,26 +28,26 @@ export const add: CommandInt = {
 
     run: async (interaction) => {
         const examen = interaction.options.getString('examen', true);
-        const date = interaction.options.getString('date', true);
-        const heure = interaction.options.getString('heure', true);
+        const stringDate = interaction.options.getString('date', true);
+        const hour = interaction.options.getString('heure', true);
         const groupe = interaction.options.getRole('groupe');
         
         const successEmbed = new MessageEmbed();
 
-        const dataReg = /^\d{2}([./-])\d{2}([./-])\d{4}$/;
-        const heureReg = /^\d{2}:\d{2}$/;
+        const dateReg = /^\d{2}([./-])\d{2}([./-])\d{4}$/;
+        const hourReg = /^\d{2}:\d{2}$/;
         
-        if (!dataReg.test(date) || !dataReg.test(heure)) {
+        if (!dateReg.test(stringDate) || !hourReg.test(hour)) {
             const errorEmbed = new MessageEmbed();
             errorEmbed.setTitle('Erreur');
             errorEmbed.setColor(0xFF0000);
 
-            if (!dataReg.test(date)) {
+            if (!dateReg.test(stringDate)) {
                 errorEmbed.addField('Date', ':crossmark: La date doit être au format jj/mm/aaaa \
                 ou jj.mm.aaaa ou jj-mm-aaaa.');
             }
     
-            if (!heureReg.test(heure)) {
+            if (!hourReg.test(heure)) {
                 errorEmbed.addField('Heure', ':crossmark: L\'heure doit être au format hh:mm.');
             }
 
