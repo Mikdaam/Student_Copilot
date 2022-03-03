@@ -54,7 +54,12 @@ export const add: CommandInt = {
             await interaction.reply({embeds: [errorEmbed], ephemeral: true});
         }
          
-        
+        // ressourece pour dessiner svg: 
+        // https://dev.to/en3sis/advanced-discord-js-custom-embeds-using-attachments-2bpn
+        // https://editor.method.ac/
+        // https://www.sliderrevolution.com/resources/html-calendar/
+        // https://www.google.fr/search?q=svg+calendar+month+generator
+        // https://akx.github.io/svg-calendar-generator/
 
         console.log(examen, date, heure, groupe);
 
