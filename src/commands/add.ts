@@ -1,29 +1,46 @@
 import { MessageEmbed } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInt } from '../interfaces/CommandInt';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+/*async function main() {
+    await prisma.event.create({
+        data: {
+            name: 'cybersecurite',
+            description: 'Examen de cybersecurité',
+            event_date: new Date('2020-09-01'),
+            event_group: 'Toto',
+            week_remainder_date: new Date('2020-09-01'),
+            two_days_remainder_date: new Date('2020-09-01'),
+            day_prior_remainder_date: new Date('2020-09-01'),
+        }
+    })
+}*/
 
 export const add: CommandInt = {
     data: new SlashCommandBuilder()
         .setName('add')
-        .setDescription('Ajoute un rappel pour l\'examen donné en argument.')
+        .setDescription('Ajoute un évenement au rappel')
         .addStringOption(option => 
             option.setName('examen')
                 .setRequired(true)
-                .setDescription('L\'examen à ajouter.')
+                .setDescription('L\'évenement à ajouter.')
         )
         .addStringOption(option => 
             option.setName('date')
                 .setRequired(true)
-                .setDescription('La date de l\'examen.')
+                .setDescription('La date de l\'évenement.')
         )
         .addStringOption(option => 
             option.setName('heure')
                 .setRequired(true)
-                .setDescription('L\'heure de l\'examen.')
+                .setDescription('L\'heure de l\'évenement.')
         )
         .addRoleOption(option => 
             option.setName('groupe')
-                .setDescription('Le groupe qui passe l\'examen.')
+                .setDescription('Le groupe dont l\'évenement concerne.')
         ),
 
     run: async (interaction) => {
@@ -47,22 +64,66 @@ export const add: CommandInt = {
                 ou jj.mm.aaaa ou jj-mm-aaaa.');
             }
     
-            if (!hourReg.test(heure)) {
+            if (!hourReg.test(hour)) {
                 errorEmbed.addField('Heure', ':crossmark: L\'heure doit être au format hh:mm.');
             }
 
             await interaction.reply({embeds: [errorEmbed], ephemeral: true});
         }
-         
-        // ressourece pour dessiner svg: 
-        // https://dev.to/en3sis/advanced-discord-js-custom-embeds-using-attachments-2bpn
-        // https://editor.method.ac/
-        // https://www.sliderrevolution.com/resources/html-calendar/
-        // https://www.google.fr/search?q=svg+calendar+month+generator
-        // https://akx.github.io/svg-calendar-generator/
+        const formatDate = stringDate.replace(/(\d+[./-])(\d+[./-])/, '$2$1');
+        
+        let eventDate = new Date(`${formatDate} ${hour}`);
 
-        console.log(examen, date, heure, groupe);
+        if (eventDate.getTime() < Date.now()) {
+            const errorEmbed = new MessageEmbed();
+            errorEmbed.setTitle('Erreur');
+            errorEmbed.setColor(0xFF0000);
+            errorEmbed.addField('Date', 'Impossible de créer un evenement à une date passée.');
 
-        await interaction.followUp(examen);
+            await interaction.reply({embeds: [errorEmbed], ephemeral: true});
+        }
+        
+        if(!groupe) {
+            
+        }
+        /*if (groupe) {
+            successEmbed.setTitle('Ajout d\'un évenement');
+            successEmbed.setColor(0x00FF00);
+            successEmbed.addField('Évenement', examen);
+            successEmbed.addField('Date', eventDate.toLocaleDateString());
+            successEmbed.addField('Heure', eventDate.toLocaleTimeString());
+            successEmbed.addField('Groupe', groupe.name);
+
+            await interaction.reply({embeds: [successEmbed]});
+        }*/
+
+        const oneWeekBefore = new Date(eventDate.setDate(eventDate.getDate() - 7));
+
+        eventDate = new Date(`${formatDate} ${hour}`);
+        const twoDayBefore = new Date(eventDate.setDate(eventDate.getDate() - 2));
+
+        eventDate = new Date(`${formatDate} ${hour}`);
+        const oneDayBefore = new Date(eventDate.setDate(eventDate.getDate() - 1));
+
+        await prisma.event.create({
+            data: {
+                name: examen,
+                description: 'Examen de cybersecurité',
+                event_date: eventDate,
+                event_group: groupe ? groupe.name : 'everyone',
+                week_remainder_date: oneWeekBefore,
+                two_days_remainder_date: twoDayBefore,
+                day_prior_remainder_date: oneDayBefore,
+            }
+        });
+
+        const allEvents = await prisma.event.findMany();
+
+        await prisma.$disconnect();
+
+        console.log(examen, stringDate, hour, groupe);
+        console.log(allEvents);
+
+        //await interaction.followUp(examen);
     }
 }
