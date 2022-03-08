@@ -117,6 +117,30 @@ export const add: CommandInt = {
             }
         });
 
+        if (Date.now() > oneWeekBefore) {
+            let callInTwoDays = Date.now() - twoDayBefore;
+            let callTomorrow = Date.now() - oneWeekBefore;
+        } 
+        
+        if (Date.now() > twoDayBefore) {
+            let callTomorrow = Date.now() - oneWeekBefore;
+        }
+
+        let callInWeek = Date.now() - oneWeekBefore;
+        let callInTwoDays = Date.now() - twoDayBefore;
+        let callTomorrow = Date.now() - oneWeekBefore;
+        
+
+
+        setTimeout(() => {
+            // recuperer les donnes à afficher, 
+
+            // Afficher les !
+
+            // supprimer l'evenement de la bD
+            
+        }, callInWeek);
+
         const allEvents = await prisma.event.findMany();
 
         await prisma.$disconnect();
