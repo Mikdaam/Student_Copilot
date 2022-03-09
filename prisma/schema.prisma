@@ -16,7 +16,12 @@ model Event {
     description                 String  
     event_date                  DateTime    @db.Date
     event_group                 String      @db.VarChar(100)
-    week_remainder_date         DateTime?   @db.Date
-    two_days_remainder_date     DateTime?   @db.Date 
-    day_prior_remainder_date    DateTime    @db.Date
+    remainders_date             Remainder[]
+}
+
+model Remainder {
+    reminder_id                 Int         @id @default(autoincrement())
+    remainder_date              DateTime    @db.Date
+    event                       Event       @relation(fields: [event_id], references: [id])
+    event_id                    Int
 }
