@@ -13,7 +13,7 @@ dotenv.config();
 
     const BOT = new Client({ intents: ["GUILDS"] });
 
-    BOT.on("ready", async () => await onReady());
+    BOT.on("ready", async () => await onReady(BOT));
 
     BOT.on('interaction', async (interaction) => await onInteraction(interaction));
 
