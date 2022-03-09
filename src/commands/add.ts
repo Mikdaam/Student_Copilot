@@ -24,9 +24,14 @@ export const add: CommandInt = {
         .setName('add')
         .setDescription('Ajoute un évenement au rappel')
         .addStringOption(option => 
-            option.setName('examen')
+            option.setName('event')
                 .setRequired(true)
                 .setDescription('L\'évenement à ajouter.')
+        )
+        .addStringOption(option =>
+            option.setName('description')
+                .setRequired(true)
+                .setDescription('Bref description de l\'évenement.')
         )
         .addStringOption(option => 
             option.setName('date')
@@ -44,7 +49,8 @@ export const add: CommandInt = {
         ),
 
     run: async (interaction) => {
-        const examen = interaction.options.getString('examen', true);
+        const event = interaction.options.getString('event', true);
+        const desc = interaction.options.getString('description', true);
         const stringDate = interaction.options.getString('date', true);
         const hour = interaction.options.getString('heure', true);
         const groupe = interaction.options.getRole('groupe');
@@ -83,10 +89,10 @@ export const add: CommandInt = {
             await interaction.reply({embeds: [errorEmbed], ephemeral: true});
         }
         
-        if(!groupe) {
+        /*if(!groupe) {
             
         }
-        /*if (groupe) {
+        if (groupe) {
             successEmbed.setTitle('Ajout d\'un évenement');
             successEmbed.setColor(0x00FF00);
             successEmbed.addField('Évenement', examen);
@@ -105,19 +111,33 @@ export const add: CommandInt = {
         eventDate = new Date(`${formatDate} ${hour}`);
         const oneDayBefore = new Date(eventDate.setDate(eventDate.getDate() - 1));
 
+        const remainders_date = [];
+
+        if (oneWeekBefore.getTime() > Date.now()) {
+            remainders_date.push({ remainder_date: oneWeekBefore });
+        }
+
+        if (twoDayBefore.getTime() > Date.now()) {
+            remainders_date.push({ remainder_date: twoDayBefore });
+        }
+
+        if (oneDayBefore.getTime() > Date.now()) {
+            remainders_date.push({ remainder_date: oneDayBefore });
+        }
+
         await prisma.event.create({
             data: {
-                name: examen,
-                description: 'Examen de cybersecurité',
+                name: event,
+                description: desc,
                 event_date: eventDate,
                 event_group: groupe ? groupe.name : 'everyone',
-                week_remainder_date: oneWeekBefore,
-                two_days_remainder_date: twoDayBefore,
-                day_prior_remainder_date: oneDayBefore,
+                remainders_date: {
+                    create: remainders_date
+                }
             }
         });
 
-        if (Date.now() > oneWeekBefore) {
+        /*if (Date.now() > oneWeekBefore) {
             let callInTwoDays = Date.now() - twoDayBefore;
             let callTomorrow = Date.now() - oneWeekBefore;
         } 
@@ -139,13 +159,13 @@ export const add: CommandInt = {
 
             // supprimer l'evenement de la bD
             
-        }, callInWeek);
+        }, callInWeek);*/
 
         const allEvents = await prisma.event.findMany();
 
         await prisma.$disconnect();
 
-        console.log(examen, stringDate, hour, groupe);
+        console.log(event, stringDate, hour, groupe);
         console.log(allEvents);
 
         //await interaction.followUp(examen);
