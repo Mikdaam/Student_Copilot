@@ -4,20 +4,7 @@ import { CommandInt } from '../interfaces/CommandInt';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-
-/*async function main() {
-    await prisma.event.create({
-        data: {
-            name: 'cybersecurite',
-            description: 'Examen de cybersecurité',
-            event_date: new Date('2020-09-01'),
-            event_group: 'Toto',
-            week_remainder_date: new Date('2020-09-01'),
-            two_days_remainder_date: new Date('2020-09-01'),
-            day_prior_remainder_date: new Date('2020-09-01'),
-        }
-    })
-}*/
+const EveryOneId: number = 892769799774548008;
 
 export const add: CommandInt = {
     data: new SlashCommandBuilder()
@@ -66,12 +53,12 @@ export const add: CommandInt = {
             errorEmbed.setColor(0xFF0000);
 
             if (!dateReg.test(stringDate)) {
-                errorEmbed.addField('Date', ':crossmark: La date doit être au format jj/mm/aaaa \
+                errorEmbed.addField('Date', ':exclamation: La date doit être au format jj/mm/aaaa \
                 ou jj.mm.aaaa ou jj-mm-aaaa.');
             }
     
             if (!hourReg.test(hour)) {
-                errorEmbed.addField('Heure', ':crossmark: L\'heure doit être au format hh:mm.');
+                errorEmbed.addField('Heure', ':exclamation: L\'heure doit être au format hh:mm.');
             }
 
             await interaction.reply({embeds: [errorEmbed], ephemeral: true});
@@ -88,7 +75,7 @@ export const add: CommandInt = {
 
             await interaction.reply({embeds: [errorEmbed], ephemeral: true});
         }
-        
+    
         /*if(!groupe) {
             
         }
@@ -130,7 +117,7 @@ export const add: CommandInt = {
                 name: event,
                 description: desc,
                 event_date: eventDate,
-                event_group: groupe ? groupe.name : 'everyone',
+                event_group: groupe ? Number.parseInt(groupe.id) : EveryOneId,
                 remainders_date: {
                     create: remainders_date
                 }

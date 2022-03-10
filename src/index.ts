@@ -7,7 +7,7 @@ import { onInteraction } from './events/onInteraction';
 
 dotenv.config();
 
-// Don't be scre, it's an anonymous IIFE (see https://en.wikipedia.org/wiki/Immediately-invoked_function_expression)
+// Don't be scare, it's an anonymous IIFE (see https://en.wikipedia.org/wiki/Immediately-invoked_function_expression)
 (async () => {
     if (!validateEnv("TOKEN") && !validateEnv("CLIENT_ID") && validateEnv("GUILD_ID")) {return;}
 

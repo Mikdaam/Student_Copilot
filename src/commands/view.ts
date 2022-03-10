@@ -5,6 +5,13 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const getFormatedHour = (date: Date): string => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+}
+
 export const view: CommandInt = {
     data: new SlashCommandBuilder()
         .setName('view')
@@ -51,10 +58,28 @@ export const view: CommandInt = {
             });
 
             await prisma.$disconnect();
-            
+        
+            const embed = new MessageEmbed()
+            .setTitle(':calendar_spiral: Evenement(s) de la semaine')
+            .setDescription('Liste des evenements de la semaine')
+            .setColor('#5eb92d')
+
+            if(events.length == 0) {
+                embed.addField('Aucun evenement', 'Aucun evenement n\'est prevu pour cette semaine.');
+            } else {
+                for (const event of events) {
+                    embed.addField(
+                        `Event : ${event.name}`,
+                        `${event.description}\n:date: ${event.event_date.toDateString()}   :clock2: ${getFormatedHour(event.event_date)}`,
+                        true
+                    )
+                }
+            }
+            await interaction.editReply({embeds: [embed]});
+
             console.log(events);
 
-            await interaction.editReply({content: 'Rapels de la semaine'});
+            //await interaction.editReply({content: 'Rapels de la semaine'});
         } else if (interaction.options.getSubcommand() === 'month') {
             await interaction.reply({content: 'Rapels du mois', ephemeral: true});
         }

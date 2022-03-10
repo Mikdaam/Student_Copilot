@@ -13,7 +13,7 @@ export const help: CommandInt = {
         const embed = new MessageEmbed();
         embed.setTitle('Help');
         embed.setDescription('This is a list of commands available to you.');
-        embed.setColor(0x00FF00);
+        embed.setColor(0x2f38df);
         embed.setAuthor({
             name: interaction.user.tag,
             iconURL: interaction.user.displayAvatarURL(),

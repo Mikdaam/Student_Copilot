@@ -1,10 +1,16 @@
 import { PrismaClient } from "@prisma/client";
-import { Channel, Client, MessageEmbed, TextChannel } from "discord.js";
+import { Client, MessageEmbed, TextChannel } from "discord.js";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const prisma = new PrismaClient();
+
+const getDaysFromNow = (date: Date) => {
+    const now = new Date();
+    const diff = date.getDate() - now.getDate();
+    return diff;
+}
 
 const remainder = async (client: Client) => {
     const remainders = await prisma.remainder.findMany({
@@ -21,10 +27,12 @@ const remainder = async (client: Client) => {
     if (remainders.length != 0) {
         for (const remainder of remainders) {
             const remainderMessage = new MessageEmbed()
+                .setTitle(':alarm_clock: Rappel')
                 .setColor('#0099ff')
-                .setTitle(remainder.event.name)
-                .setDescription(remainder.event.description)
-                .setFooter('Remainder');
+                .setDescription(`Dans ${getDaysFromNow(remainder.event.event_date)} jours, il y a :`)
+                .addField(remainder.event.name, remainder.event.description)
+                .addField('', `<@&${remainder.event.event_group}>, Il est temps de se préparer !`)
+                .setFooter('Rappel automatique');
 
             const remainderChannel = client.channels.cache.get(process.env.CHANNEL_ID || '') as TextChannel;
 
