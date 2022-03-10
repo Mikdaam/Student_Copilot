@@ -15,7 +15,7 @@ model Event {
     name                        String      @db.VarChar(200)
     description                 String  
     event_date                  DateTime    @db.Date
-    event_group                 String      @db.VarChar(100)
+    event_group                 Int      
     remainders_date             Remainder[]
 }
 
