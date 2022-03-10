@@ -21,5 +21,5 @@ export const onReady = async (BOT: Client) => {
     console.log('Commands successfully registered.');
     console.log('Bot is ready');
 
-    //remainder(BOT);
+    remainder(BOT);
 }
