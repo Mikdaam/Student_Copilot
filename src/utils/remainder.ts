@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Channel, Client, MessageEmbed } from "discord.js";
+import { Channel, Client, MessageEmbed, TextChannel } from "discord.js";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -26,9 +26,9 @@ const remainder = async (client: Client) => {
                 .setDescription(remainder.event.description)
                 .setFooter('Remainder');
 
-            const remainderChannel = client.channels.cache.get(process.env.CHANNEL_ID || '') as Channel;
+            const remainderChannel = client.channels.cache.get(process.env.CHANNEL_ID || '') as TextChannel;
 
-            remainderChannel.send(remainderMessage);
+            remainderChannel.send({embeds: [remainderMessage]});
         }
     }
 
